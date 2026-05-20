@@ -1,5 +1,7 @@
 using Dot.Net.WebApi.Domain;
 using Microsoft.AspNetCore.Mvc;
+using P7CreateRestApi.Models;
+using P7CreateRestApi.Services.Interfaces;
 
 namespace Dot.Net.WebApi.Controllers
 {
@@ -7,32 +9,39 @@ namespace Dot.Net.WebApi.Controllers
     [Route("[controller]")]
     public class BidListController : ControllerBase
     {
-        [HttpGet]
-        [Route("validate")]
-        public IActionResult Validate([FromBody] BidList bidList)
+        private readonly IBidListService _service;
+
+        public BidListController(IBidListService service)
         {
-            // TODO: check data valid and save to db, after saving return bid list
-            return Ok();
+            _service = service;
         }
 
         [HttpGet]
-        [Route("update/{id}")]
-        public IActionResult ShowUpdateForm(int id)
+        public IActionResult GetAll ()
+        {
+            return Ok();
+        }
+
+        [HttpGet("{id]")]
+        public IActionResult Get (int id)
         {
             return Ok();
         }
 
         [HttpPost]
-        [Route("update/{id}")]
-        public IActionResult UpdateBid(int id, [FromBody] BidList bidList)
+        public IActionResult Create(BidListCreateDTO dto)
         {
-            // TODO: check required fields, if valid call service to update Bid and return list Bid
             return Ok();
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult DeleteBid(int id)
+        [HttpPut("{id]")]
+        public IActionResult Update (BidListUpdateDTO dto)
+        {
+            return Ok();
+        }
+
+        [HttpDelete("{id]")]
+        public IActionResult Delete (int id)
         {
             return Ok();
         }
