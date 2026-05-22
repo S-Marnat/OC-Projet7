@@ -17,33 +17,57 @@ namespace Dot.Net.WebApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll ()
+        public async Task<IActionResult> GetAll ()
         {
-            return Ok();
+            var resultat = await _service.GetAllAsync();
+            return Ok(resultat);
         }
 
         [HttpGet("{id]")]
-        public IActionResult Get (int id)
+        public async Task<IActionResult> Get (int id)
         {
-            return Ok();
+            var resultat = await _service.GetByIdAsync(id);
+
+            if (resultat == null)
+                return NotFound();
+
+            return Ok(resultat);
         }
 
         [HttpPost]
-        public IActionResult Create(BidListCreateDTO dto)
+        public async Task<IActionResult> Create(BidListCreateDTO dto)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultat = await _service.CreateAsync(dto);
+
+            return CreatedAtAction(nameof(Get), new { id = resultat.BidListId }, resultat);
         }
 
         [HttpPut("{id]")]
-        public IActionResult Update (BidListUpdateDTO dto)
+        public async Task<IActionResult> Update (int id, BidListUpdateDTO dto)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultat = await _service.UpdateAsync(id, dto);
+
+            if (resultat == null)
+                return NotFound();
+            
+            return Ok(resultat);
         }
 
         [HttpDelete("{id]")]
-        public IActionResult Delete (int id)
+        public async Task<IActionResult> Delete (int id)
         {
-            return Ok();
+            var resultat = await _service.DeleteAsync(id);
+
+            if (!resultat)
+                return NotFound();
+            
+            return NoContent();
         }
     }
 }
