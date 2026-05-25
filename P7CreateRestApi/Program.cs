@@ -13,6 +13,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IBidListService, BidListService>();
 builder.Services.AddScoped<IBidListRepository, BidListRepository>();
+builder.Services.AddScoped<ICurvePointService, CurvePointService>();
+builder.Services.AddScoped<ICurvePointRepository, CurvePointRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
