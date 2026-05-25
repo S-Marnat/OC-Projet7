@@ -1,33 +1,114 @@
-﻿using P7CreateRestApi.Models;
+﻿using Dot.Net.WebApi.Domain;
+using P7CreateRestApi.Models;
+using P7CreateRestApi.Repositories.Interfaces;
 using P7CreateRestApi.Services.Interfaces;
 
 namespace P7CreateRestApi.Services
 {
     public class CurvePointService : ICurvePointService
     {
-        public Task<CurvePointReadDTO> CreateAsync(CurvePointCreateDTO dto)
+        private readonly ICurvePointRepository _repository;
+
+        public CurvePointService(ICurvePointRepository repository)
         {
-            throw new NotImplementedException();
+            _repository = repository;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<CurvePointReadDTO> CreateAsync(CurvePointCreateDTO dto)
         {
-            throw new NotImplementedException();
+            // Mapper DTO -> Domain
+            var entite = new CurvePoint
+            {
+                CurveId = dto.CurveId,
+                AsOfDate = dto.AsOfDate,
+                Term = dto.Term,
+                CurvePointValue = dto.CurvePointValue,
+                CreationDate = DateTime.UtcNow
+            };
+
+            // Appeler le repository
+            var creer = await _repository.CreateAsync(entite);
+
+            // Mapper Domain -> DTO Read
+            return new CurvePointReadDTO
+            {
+                Id = creer.Id,
+                CurveId = creer.CurveId,
+                AsOfDate = creer.AsOfDate,
+                Term = creer.Term,
+                CurvePointValue = creer.CurvePointValue,
+                CreationDate = creer.CreationDate
+            };
         }
 
-        public Task<IEnumerable<CurvePointReadDTO>> GetAllAsync()
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            // Appeler le repository
+            return await _repository.DeleteAsync(id);
         }
 
-        public Task<CurvePointReadDTO?> GetByIdAsync(int id)
+        public async Task<IEnumerable<CurvePointReadDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            // Appeler le repository
+            var entites = await _repository.GetAllAsync();
+
+            // Mapper Domain -> DTO Read
+            return entites.Select(e => new CurvePointReadDTO
+            {
+                Id = e.Id,
+                CurveId = e.CurveId,
+                AsOfDate = e.AsOfDate,
+                Term = e.Term,
+                CurvePointValue = e.CurvePointValue,
+                CreationDate = e.CreationDate
+            });
         }
 
-        public Task<CurvePointReadDTO?> UpdateAsync(int id, CurvePointUpdateDTO dto)
+        public async Task<CurvePointReadDTO?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            // Appeeler le repository
+            var entite = await _repository.GetByIdAsync(id);
+
+            if (entite == null)
+                return null;
+
+            // Mapper Domain -> DTO Read
+            return new CurvePointReadDTO
+            {
+                Id = entite.Id,
+                CurveId = entite.CurveId,
+                AsOfDate = entite.AsOfDate,
+                Term = entite.Term,
+                CurvePointValue = entite.CurvePointValue,
+                CreationDate = entite.CreationDate
+            };
+        }
+
+        public async Task<CurvePointReadDTO?> UpdateAsync(int id, CurvePointUpdateDTO dto)
+        {
+            // Récupérer l'entité existante
+            var entite = await _repository.GetByIdAsync(id);
+
+            if (entite == null)
+                return null;
+
+            // Mapper DTO -> Domain
+            entite.AsOfDate = dto.AsOfDate;
+            entite.Term = dto.Term;
+            entite.CurvePointValue = dto.CurvePointValue;
+
+            // Appeler le repository
+            var mettreAJour = await _repository.UpdateAsync(entite);
+
+            // Mapper Domain -> DTO Read
+            return new CurvePointReadDTO
+            {
+                Id = mettreAJour.Id,
+                AsOfDate = mettreAJour.AsOfDate,
+                Term = mettreAJour.Term,
+                CurvePointValue = mettreAJour.CurvePointValue,
+                CreationDate = mettreAJour.CreationDate
+            };
         }
     }
 }
