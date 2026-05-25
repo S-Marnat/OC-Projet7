@@ -23,7 +23,7 @@ namespace Dot.Net.WebApi.Controllers
             return Ok(resultat);
         }
 
-        [HttpGet("{id]")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get (int id)
         {
             var resultat = await _service.GetByIdAsync(id);
@@ -45,7 +45,7 @@ namespace Dot.Net.WebApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = resultat.BidListId }, resultat);
         }
 
-        [HttpPut("{id]")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update (int id, BidListUpdateDTO dto)
         {
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace Dot.Net.WebApi.Controllers
             return Ok(resultat);
         }
 
-        [HttpDelete("{id]")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete (int id)
         {
             var resultat = await _service.DeleteAsync(id);

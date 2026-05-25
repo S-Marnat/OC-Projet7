@@ -34,9 +34,13 @@ namespace P7CreateRestApi.Services
                 Book = dto.Book,
                 DealName = dto.DealName,
                 DealType = dto.DealType,
+                SourceListId = dto.SourceListId,
                 Side = dto.Side,
                 CreationDate = DateTime.UtcNow,
-                CreationName = "user" // A implémenter lors du développement de l'authentification
+                CreationName = "user", // A implémenter lors du développement de l'authentification
+                RevisionName = "user", // A implémenter lors du développement de l'authentification
+                RevisionDate = DateTime.UtcNow
+
             };
 
             // Appeler le repository
@@ -164,10 +168,10 @@ namespace P7CreateRestApi.Services
             entite.BidStatus = dto.BidStatus;
             entite.Trader = dto.Trader;
             entite.Book = dto.Book;
-            entite.RevisionName = dto.RevisionName;
             entite.DealName = dto.DealName;
             entite.DealType = dto.DealType;
             entite.Side = dto.Side;
+            entite.RevisionName = "user"; // A implémenter lors du développement de l'authentification;
             entite.RevisionDate = DateTime.UtcNow;
 
             // Appeler le repository

@@ -1,12 +1,19 @@
 using Dot.Net.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
+using P7CreateRestApi.Repositories;
+using P7CreateRestApi.Repositories.Interfaces;
+using P7CreateRestApi.Services;
+using P7CreateRestApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IBidListService, BidListService>();
+builder.Services.AddScoped<IBidListRepository, BidListRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

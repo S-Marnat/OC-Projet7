@@ -42,9 +42,6 @@ namespace P7CreateRestApi.Models
         [Required(ErrorMessage = "Le portefeuille auquel appartient l'offre doit être renseigné")]
         public string Book { get; set; }
 
-        [Required(ErrorMessage = "Le nom de la personne ayant modifié l'enregistrement doit être renseigné")]
-        public string RevisionName { get; set; }
-
         [Required(ErrorMessage = "Le nom du deal associé doit être renseigné")]
         public string DealName { get; set; }
 
