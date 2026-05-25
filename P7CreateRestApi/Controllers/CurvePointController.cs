@@ -1,5 +1,7 @@
 using Dot.Net.WebApi.Domain;
 using Microsoft.AspNetCore.Mvc;
+using P7CreateRestApi.Models;
+using P7CreateRestApi.Services.Interfaces;
 
 namespace Dot.Net.WebApi.Controllers
 {
@@ -7,52 +9,65 @@ namespace Dot.Net.WebApi.Controllers
     [Route("[controller]")]
     public class CurvePointController : ControllerBase
     {
-        // TODO: Inject Curve Point service
+        private readonly ICurvePointService _service;
 
-        [HttpGet]
-        [Route("list")]
-        public IActionResult Home()
+        public CurvePointController(ICurvePointService service)
         {
-            return Ok();
+            _service = service;
         }
 
         [HttpGet]
-        [Route("add")]
-        public IActionResult AddCurvePoint([FromBody]CurvePoint curvePoint)
+        public async Task<IActionResult> GetAll()
         {
-            return Ok();
+            var resultat = await _service.GetAllAsync();
+            return Ok(resultat);
         }
 
-        [HttpGet]
-        [Route("validate")]
-        public IActionResult Validate([FromBody]CurvePoint curvePoint)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            // TODO: check data valid and save to db, after saving return bid list
-            return Ok();
-        }
+            var resultat = await _service.GetByIdAsync(id);
 
-        [HttpGet]
-        [Route("update/{id}")]
-        public IActionResult ShowUpdateForm(int id)
-        {
-            // TODO: get CurvePoint by Id and to model then show to the form
-            return Ok();
+            if (resultat == null)
+                return NotFound();
+
+            return Ok(resultat);
         }
 
         [HttpPost]
-        [Route("update/{id}")]
-        public IActionResult UpdateCurvePoint(int id, [FromBody] CurvePoint curvePoint)
+        public async Task<IActionResult> Create(CurvePointCreateDTO dto)
         {
-            // TODO: check required fields, if valid call service to update Curve and return Curve list
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultat = await _service.CreateAsync(dto);
+
+            return CreatedAtAction(nameof(Get), new { id = resultat.Id }, resultat);
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public IActionResult DeleteBid(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, CurvePointUpdateDTO dto)
         {
-            // TODO: Find Curve by Id and delete the Curve, return to Curve list
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var resultat = await _service.UpdateAsync(id, dto);
+
+            if (resultat == null)
+                return NotFound();
+
+            return Ok(resultat);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var resultat = await _service.DeleteAsync(id);
+
+            if (!resultat)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }
