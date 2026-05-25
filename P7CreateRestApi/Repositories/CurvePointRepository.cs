@@ -1,33 +1,55 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using Dot.Net.WebApi.Data;
+using Dot.Net.WebApi.Domain;
+using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
 
 namespace P7CreateRestApi.Repositories
 {
     public class CurvePointRepository : ICurvePointRepository
     {
-        public Task<CurvePoint> CreateAsync(CurvePoint curvePoint)
+        private readonly LocalDbContext _context;
+
+        public CurvePointRepository(LocalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        
+        public async Task<CurvePoint> CreateAsync(CurvePoint curvePoint)
+        {
+            _context.CurvePoints.Add(curvePoint);
+            await _context.SaveChangesAsync();
+            return curvePoint;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var curvePoint = await _context.CurvePoints.FindAsync(id);
+
+            if(curvePoint != null)
+            {
+                _context.CurvePoints.Remove(curvePoint);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
-        public Task<IEnumerable<CurvePoint>> GetAllAsync()
+        public async Task<IEnumerable<CurvePoint>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.CurvePoints.ToListAsync();
         }
 
-        public Task<CurvePoint?> GetByIdAsync(int id)
+        public async Task<CurvePoint?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.CurvePoints.FindAsync(id);
         }
 
-        public Task<CurvePoint> UpdateAsync(CurvePoint curvePoint)
+        public async Task<CurvePoint> UpdateAsync(CurvePoint curvePoint)
         {
-            throw new NotImplementedException();
+            _context.CurvePoints.Update(curvePoint);
+            await _context.SaveChangesAsync();
+            return curvePoint;
         }
     }
 }
