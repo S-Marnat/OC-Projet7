@@ -1,33 +1,55 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using Dot.Net.WebApi.Data;
+using Dot.Net.WebApi.Domain;
+using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
 
 namespace P7CreateRestApi.Repositories
 {
     public class RatingRepository : IRatingRepository
     {
-        public Task<Rating> CreateAsync(Rating rating)
+        private readonly LocalDbContext _context;
+
+        public RatingRepository(LocalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        
+        public async Task<Rating> CreateAsync(Rating rating)
+        {
+            _context.Ratings.Add(rating);
+            await _context.SaveChangesAsync();
+            return rating;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var rating = await _context.Ratings.FindAsync(id);
+
+            if (rating != null)
+            {
+                _context.Ratings.Remove(rating);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
-        public Task<IEnumerable<Rating>> GetAllAsync()
+        public async Task<IEnumerable<Rating>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Ratings.ToListAsync();
         }
 
-        public Task<Rating?> GetByIdAsync(int id)
+        public async Task<Rating?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Ratings.FindAsync(id);
         }
 
-        public Task<Rating> UpdateAsync(Rating rating)
+        public async Task<Rating> UpdateAsync(Rating rating)
         {
-            throw new NotImplementedException();
+            _context.Ratings.Update(rating);
+            await _context.SaveChangesAsync();
+            return rating;
         }
     }
 }
