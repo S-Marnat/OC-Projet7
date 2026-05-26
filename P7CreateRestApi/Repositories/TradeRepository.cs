@@ -1,33 +1,57 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using Dot.Net.WebApi.Data;
+using Dot.Net.WebApi.Domain;
+using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
+using System.Collections;
+using System.Diagnostics;
 
 namespace P7CreateRestApi.Repositories
 {
     public class TradeRepository : ITradeRepository
     {
-        public Task<Trade> CreateAsync(Trade trade)
+        private readonly LocalDbContext _context;
+
+        public TradeRepository(LocalDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<Trade> CreateAsync(Trade trade)
         {
-            throw new NotImplementedException();
+            _context.Trades.Add(trade);
+            await _context.SaveChangesAsync();
+            return trade;
         }
 
-        public Task<IEnumerable<Trade>> GetAllAsync()
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var trade = await _context.Trades.FindAsync(id);
+
+            if (trade != null)
+            {
+                _context.Trades.Remove(trade);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
-        public Task<Trade?> GetByIdAsync(int id)
+        public async Task<IEnumerable<Trade>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Trades.ToListAsync();
         }
 
-        public Task<Trade> UpdateAsync(Trade trade)
+        public async Task<Trade?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Trades.FindAsync(id);
+        }
+
+        public async Task<Trade> UpdateAsync(Trade trade)
+        {
+            _context.Trades.Update(trade);
+            await _context.SaveChangesAsync();
+            return trade;
         }
     }
 }
