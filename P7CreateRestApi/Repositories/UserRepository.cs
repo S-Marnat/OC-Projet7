@@ -2,47 +2,61 @@ using Dot.Net.WebApi.Data;
 using Dot.Net.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
+using System.Diagnostics;
 
 namespace Dot.Net.WebApi.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public LocalDbContext DbContext { get; }
+        public LocalDbContext _context { get; }
 
-        public UserRepository(LocalDbContext dbContext)
+        public UserRepository(LocalDbContext context)
         {
-            DbContext = dbContext;
+            _context = context;
         }
 
         public User FindByUserName(string userName)
         {
-            return DbContext.Users.Where(user => user.UserName == userName)
+            return _context.Users.Where(user => user.UserName == userName)
                                   .FirstOrDefault();
         }
 
-        public Task<User?> GetByIdAsync(int id)
+        public async Task<User?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Users.FindAsync(id);
         }
 
-        public Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
 
-        public Task<User> CreateAsync(User user)
+        public async Task<User> CreateAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
-        public Task<User> UpdateAsync(User user)
+        public async Task<User> UpdateAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FindAsync(id);
+
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
     }
 }
