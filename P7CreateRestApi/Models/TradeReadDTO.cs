@@ -21,7 +21,6 @@
         public DateTime? RevisionDate { get; set; }
         public string DealName { get; set; }
         public string DealType { get; set; }
-        public string SourceListId { get; set; }
         public string Side { get; set; }
     }
 }
