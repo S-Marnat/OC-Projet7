@@ -22,6 +22,8 @@ namespace P7CreateRestApi.Models
         [DataType(DataType.Currency, ErrorMessage = "Le prix de vente n'est pas valide")]
         public double? SellPrice { get; set; }
 
+        public DateTime? TradeDate { get; set; }
+
         [Required(ErrorMessage = "Le nom du produit financier doit être renseigné")]
         public string TradeSecurity { get; set; }
 
