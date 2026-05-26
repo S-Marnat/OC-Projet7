@@ -1,4 +1,5 @@
 using Dot.Net.WebApi.Data;
+using Dot.Net.WebApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories;
 using P7CreateRestApi.Repositories.Interfaces;
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IRuleNameService, RuleNameService>();
 builder.Services.AddScoped<IRuleNameRepository, RuleNameRepository>();
 builder.Services.AddScoped<ITradeService, TradeService>();
 builder.Services.AddScoped<ITradeRepository, TradeRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

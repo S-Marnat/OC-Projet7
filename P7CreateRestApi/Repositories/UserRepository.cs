@@ -1,10 +1,11 @@
 using Dot.Net.WebApi.Data;
 using Dot.Net.WebApi.Domain;
 using Microsoft.EntityFrameworkCore;
+using P7CreateRestApi.Repositories.Interfaces;
 
 namespace Dot.Net.WebApi.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         public LocalDbContext DbContext { get; }
 
@@ -19,18 +20,29 @@ namespace Dot.Net.WebApi.Repositories
                                   .FirstOrDefault();
         }
 
-        public async Task<List<User>> FindAll()
+        public Task<User?> GetByIdAsync(int id)
         {
-            return await DbContext.Users.ToListAsync();
+            throw new NotImplementedException();
         }
 
-        public void Add(User user)
+        public Task<IEnumerable<User>> GetAllAsync()
         {
+            throw new NotImplementedException();
         }
 
-        public User FindById(int id)
+        public Task<User> CreateAsync(User user)
         {
-            return null;
+            throw new NotImplementedException();
+        }
+
+        public Task<User> UpdateAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
