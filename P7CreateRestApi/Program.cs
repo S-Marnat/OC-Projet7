@@ -17,6 +17,8 @@ builder.Services.AddScoped<ICurvePointService, CurvePointService>();
 builder.Services.AddScoped<ICurvePointRepository, CurvePointRepository>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IRuleNameService, RuleNameService>();
+builder.Services.AddScoped<IRuleNameRepository, RuleNameRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -6,8 +6,8 @@ namespace P7CreateRestApi.Repositories.Interfaces
     {
         Task<RuleName?> GetByIdAsync(int id);
         Task<IEnumerable<RuleName>> GetAllAsync();
-        Task<Rating> CreateAsync(RuleName ruleName);
-        Task<Rating> UpdateAsync(RuleName ruleName);
+        Task<RuleName> CreateAsync(RuleName ruleName);
+        Task<RuleName> UpdateAsync(RuleName ruleName);
         Task<bool> DeleteAsync(int id);
     }
 }
