@@ -16,6 +16,11 @@ namespace P7CreateRestApi.Services
 
         public async Task<UserReadDTO> CreateAsync(UserCreateDTO dto)
         {
+            // Traitement des données
+            var existe = _repository.FindByUserName(dto.UserName);
+            if (existe != null)
+                throw new Exception("Nom d'utilisateur déjà utilisé");
+
             // Mapper DTO -> Domain
             var entite = new User
             {
@@ -79,6 +84,11 @@ namespace P7CreateRestApi.Services
 
         public async Task<UserReadDTO?> UpdateAsync(int id, UserUpdateDTO dto)
         {
+            // Traitement des données
+            var existe = _repository.FindByUserName(dto.UserName);
+            if (existe != null)
+                throw new Exception("Nom d'utilisateur déjà utilisé");
+
             // Récupérer l'entité existante
             var entite = await _repository.GetByIdAsync(id);
 
