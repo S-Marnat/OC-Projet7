@@ -10,12 +10,16 @@ namespace P7CreateRestApi.Models
         [Required(ErrorMessage = "La description de la règle doit être renseignée")]
         public string Description { get; set; }
 
-        public string? Json { get; set; }
+        [Required(ErrorMessage = "Le champ concernant le JSON doit être renseigné")]
+        public string Json { get; set; }
 
-        public string? Template { get; set; }
+        [Required(ErrorMessage = "Le champ concernant le template doit être renseigné")]
+        public string Template { get; set; }
 
-        public string? SqlStr { get; set; }
+        [Required(ErrorMessage = "Le champ concernant la requêtee SQL complète doit être renseigné")]
+        public string SqlStr { get; set; }
 
-        public string? SqlPart { get; set; }
+        [Required(ErrorMessage = "Le champ concernant le fragment SQL doit être renseigné")]
+        public string SqlPart { get; set; }
     }
 }

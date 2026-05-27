@@ -45,7 +45,7 @@ namespace P7CreateRestApi.Models
         [Required(ErrorMessage = "Le type de deal doit être renseigné")]
         public string DealType { get; set; }
 
-        [Required(ErrorMessage = "La source du lien externe doit être renseignée")]
+        [Required(ErrorMessage = "L'identifiant externe doit être renseigné")]
         public string SourceListId { get; set; }
 
         [Required(ErrorMessage = "Le côté de la transaction doit être renseigné")]
