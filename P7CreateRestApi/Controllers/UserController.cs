@@ -34,17 +34,6 @@ namespace Dot.Net.WebApi.Controllers
             return Ok(resultat);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(UserCreateDTO dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var resultat = await _service.CreateAsync(dto);
-
-            return CreatedAtAction(nameof(Get), new { id = resultat.Id }, resultat);
-        }
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UserUpdateDTO dto)
         {
@@ -57,17 +46,6 @@ namespace Dot.Net.WebApi.Controllers
                 return NotFound();
 
             return Ok(resultat);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var resultat = await _service.DeleteAsync(id);
-
-            if (!resultat)
-                return NotFound();
-
-            return NoContent();
         }
     }
 }

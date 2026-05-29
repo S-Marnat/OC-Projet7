@@ -1,5 +1,6 @@
 using Dot.Net.WebApi.Data;
 using Dot.Net.WebApi.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
 using System.Diagnostics;
@@ -8,55 +9,40 @@ namespace Dot.Net.WebApi.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public LocalDbContext _context { get; }
+        public readonly UserManager<User> _userManager;
 
-        public UserRepository(LocalDbContext context)
+        public UserRepository(UserManager<User> userManager)
         {
-            _context = context;
+            _userManager = userManager;
         }
 
-        public User FindByUserName(string userName)
+        public async Task<User?> FindByUserName(string userName)
         {
-            return _context.Users.Where(user => user.UserName == userName)
-                                  .FirstOrDefault();
+            return await _userManager.FindByNameAsync(userName);
         }
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _userManager.FindByIdAsync(id.ToString());
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _userManager.Users.ToListAsync();
         }
 
-        public async Task<User> CreateAsync(User user)
+        public async Task<User?> UpdateAsync(int id, string fullname)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return null;
+
+            user.Fullname = fullname;
+
+            await _userManager.UpdateAsync(user);
+
             return user;
-        }
-
-        public async Task<User> UpdateAsync(User user)
-        {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-            return user;
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-
-            return false;
         }
     }
 }

@@ -2,10 +2,13 @@
 
 namespace P7CreateRestApi.Models
 {
-    public class UserCreateDTO
+    public class RegisterDTO
     {
         [Required(ErrorMessage = "L'identifiant utilisateur doit être renseigné")]
         public string UserName { get; set; }
+
+        [Required(ErrorMessage = "Le nom de l'utilisateur doit être renseigné")]
+        public string Fullname { get; set; }
 
         [Required(ErrorMessage = "Le mot de passe doit être renseigné")]
         [DataType(DataType.Password)]
@@ -15,8 +18,5 @@ namespace P7CreateRestApi.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Les mots de passe ne correspondent pas.")]
         public string ConfirmedPassword { get; set; }
-
-        [Required(ErrorMessage = "Le nom de l'utilisateur doit être renseigné")]
-        public string Fullname { get; set; }
     }
 }
