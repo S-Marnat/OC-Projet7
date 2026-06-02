@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using P7CreateRestApi.Models;
 using P7CreateRestApi.Services.Interfaces;
@@ -33,6 +34,7 @@ namespace Dot.Net.WebApi.Domain
             return Ok(resultat);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(RuleNameCreateDTO dto)
         {
@@ -44,6 +46,7 @@ namespace Dot.Net.WebApi.Domain
             return CreatedAtAction(nameof(Get), new { id = resultat.Id }, resultat);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, RuleNameUpdateDTO dto)
         {
@@ -58,6 +61,7 @@ namespace Dot.Net.WebApi.Domain
             return Ok(resultat);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
