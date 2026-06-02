@@ -7,6 +7,7 @@ using P7CreateRestApi.Services.Interfaces;
 
 namespace Dot.Net.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase

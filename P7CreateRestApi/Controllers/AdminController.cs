@@ -1,4 +1,5 @@
 ﻿using Dot.Net.WebApi.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using P7CreateRestApi.Models;
@@ -6,6 +7,7 @@ using P7CreateRestApi.Services.Interfaces;
 
 namespace P7CreateRestApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("[controller]")]
     public class AdminController : ControllerBase
@@ -32,7 +34,7 @@ namespace P7CreateRestApi.Controllers
             await _userManager.RemoveFromRolesAsync(user, oldRoles);
 
             // Ajouter le nouveau rôle
-            var newRole = dto.Role.ToLower();
+            var newRole = dto.Role;
             var resultat = await _userManager.AddToRoleAsync(user, newRole);
 
             if (!resultat.Succeeded)
