@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Dot.Net.WebApi.Domain;
 using P7CreateRestApi.Models;
+using P7CreateRestApi.Services.Interfaces;
 
 namespace P7CreateRestApi.Controllers
 {
@@ -12,12 +13,14 @@ namespace P7CreateRestApi.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly IJwtService _jwtService;
 
-        public AuthentificationController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager)
+        public AuthentificationController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager, IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -71,7 +74,8 @@ namespace P7CreateRestApi.Controllers
             if (!resultat.Succeeded)
                 return Unauthorized("Identifiants invalides.");
 
-            return Ok("Connexion réussie.");
+            var token = await _jwtService.GenererTokenAsync(utilisateur);
+            return Ok(new { Token = token });
         }
     }
 }
