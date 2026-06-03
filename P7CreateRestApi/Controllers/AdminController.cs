@@ -1,4 +1,5 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using Dot.Net.WebApi.Controllers;
+using Dot.Net.WebApi.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,33 +15,54 @@ namespace P7CreateRestApi.Controllers
     {
         private readonly IUserService _service;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IUserService service, UserManager<User> userManager)
+        public AdminController(IUserService service, UserManager<User> userManager, ILogger<AdminController> logger)
         {
             _service = service;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpPut("{id}/role")]
         public async Task<IActionResult> Update(int id, UserUpdateRoleDTO dto)
         {
+            _logger.LogInformation("Tentative de modification du rôle pour l'utilisateur Id={Id}.", id);
+            
+            // Vérifier que l'utilisateur existe
             var user = await _userManager.FindByIdAsync(id.ToString());
 
             if (user == null)
-                return NotFound();
+            {
+                _logger.LogWarning("La modification du rôle pour l'utilisateur Id={Id} a échoué : utilisateur non trouvé.", id);
+                return NotFound("L'Id renseigné ne correspond à aucun utilisateur.");
+            }
 
-            // Supprimer les anciens rôles
-            var oldRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, oldRoles);
+            try
+            {
+                // Supprimer les anciens rôles
+                var oldRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, oldRoles);
 
-            // Ajouter le nouveau rôle
-            var newRole = dto.Role;
-            var resultat = await _userManager.AddToRoleAsync(user, newRole);
+                // Ajouter le nouveau rôle
+                var newRole = dto.Role;
+                _logger.LogInformation("Nouveau rôle demandé pour l'utilisateur Id={Id} : {Role}", id, newRole);
+                var resultat = await _userManager.AddToRoleAsync(user, newRole);
 
-            if (!resultat.Succeeded)
-                return BadRequest(resultat.Errors);
+                if (!resultat.Succeeded)
+                {
+                    _logger.LogWarning("Echec de la modification du rôle pour l'utilisateur Id={Id} : erreurs de validation.", id);
+                    return BadRequest("Le rôle fourni est invalide.");
+                }
 
-            return Ok($"Le rôle de l'utilisateur {user.UserName} a été modifié avec succès.");
+                _logger.LogInformation("Le rôle de l'utilisateur Id={Id} a été modifié avec succès.", id);
+                return Ok($"Le rôle de l'utilisateur {user.UserName} a été modifié avec succès.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la mise a jour du rôle pour l'utilisateur Id={Id}", id);
+                return StatusCode(500, "Une erreur interne est survenue.");
+            }
         }
     }
 }
