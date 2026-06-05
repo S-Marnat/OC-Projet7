@@ -31,7 +31,7 @@ namespace P7CreateRestApi.Middlewares
 
             // Log d’entrée
             _logger.LogInformation(
-                "Requete entrante pour la méthode {Method}, le chemin {Path}, et l'utilisateur {UserId}",
+                "Requête entrante pour la méthode {Method}, le chemin {Path}, et l'utilisateur {UserId}",
                 httpMethod,
                 path,
                 userId ?? "anonyme"
@@ -48,7 +48,7 @@ namespace P7CreateRestApi.Middlewares
 
             // Log de sortie
             _logger.LogInformation(
-                "Reponse sortante pour la méthode {Method}, le chemin {Path}, le code de statut {StatusCode}, et la durée de {Duration}",
+                "Réponse sortante pour la méthode {Method}, le chemin {Path}, le code de statut {StatusCode}, et la durée de {Duration}",
                 httpMethod,
                 path,
                 statusCode,

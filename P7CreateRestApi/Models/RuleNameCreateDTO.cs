@@ -16,7 +16,7 @@ namespace P7CreateRestApi.Models
         [Required(ErrorMessage = "Le champ concernant le template doit être renseigné")]
         public string Template { get; set; }
 
-        [Required(ErrorMessage = "Le champ concernant la requêtee SQL complète doit être renseigné")]
+        [Required(ErrorMessage = "Le champ concernant la requête SQL complète doit être renseigné")]
         public string SqlStr { get; set; }
 
         [Required(ErrorMessage = "Le champ concernant le fragment SQL doit être renseigné")]

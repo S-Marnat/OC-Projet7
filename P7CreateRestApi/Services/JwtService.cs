@@ -21,20 +21,24 @@ namespace P7CreateRestApi.Services
 
         public async Task<string> GenererTokenAsync(User user)
         {
+            // Récupération des rôles de l’utilisateur
             var roles = await _userManager.GetRolesAsync(user);
 
+            // Création des claims
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("fullname", user.Fullname)
-        };
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("fullname", user.Fullname)
+            };
 
+            // Ajout des rôles dans les claims
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
+            // Création de la clé de signature
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
                     _configuration["Jwt:Key"]
@@ -42,8 +46,10 @@ namespace P7CreateRestApi.Services
                 )
             );
 
+            // Création des informations de signature du token
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            // Construction du token JWT
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
@@ -54,6 +60,7 @@ namespace P7CreateRestApi.Services
                 signingCredentials: creds
             );
 
+            // Conversion du token en string
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

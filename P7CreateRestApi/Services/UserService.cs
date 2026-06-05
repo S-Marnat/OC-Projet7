@@ -43,7 +43,7 @@ namespace P7CreateRestApi.Services
 
         public async Task<UserReadDTO?> GetByIdAsync(int id)
         {
-            // Appeeler le repository
+            // Appeler le repository
             var entite = await _repository.GetByIdAsync(id);
 
             if (entite == null)

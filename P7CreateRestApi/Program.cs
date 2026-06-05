@@ -16,9 +16,10 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
-// Add services to the container.
+// Ajout des contrôleurs MVC
 builder.Services.AddControllers();
 
+// Injection des services et repositories
 builder.Services.AddScoped<IBidListService, BidListService>();
 builder.Services.AddScoped<IBidListRepository, BidListRepository>();
 builder.Services.AddScoped<ICurvePointService, CurvePointService>();
@@ -33,7 +34,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Permet d'accéder à l'utilisateur authentifié dans les services
+builder.Services.AddHttpContextAccessor();
+
+// Configuration de Swagger + sécurité JWT dans l'interface Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -63,12 +67,11 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-// Ajout du context
+// Configuration du DbContext avec SQL Server
 builder.Services.AddDbContext<LocalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Ajout d'Identity
+// Configuration d’Identity
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
     // Configuration des règles de mot de passe
@@ -109,24 +112,31 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
+
+// Activation de l’autorisation
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Activation de Swagger uniquement en environnement de développement
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Middleware personnalisé pour logger les requêtes
 app.UseMiddleware<RequestLoggingMiddleware>();
 
+// Activation de l’authentification et de l’autorisation
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Redirection automatique vers HTTPS
 app.UseHttpsRedirection();
 
+// Mapping des contrôleurs
 app.MapControllers();
 
+// Démarrage de l’application
 app.Run();

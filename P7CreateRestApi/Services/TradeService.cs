@@ -8,14 +8,18 @@ namespace P7CreateRestApi.Services
     public class TradeService : ITradeService
     {
         private readonly ITradeRepository _repository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TradeService(ITradeRepository repository)
+        public TradeService(ITradeRepository repository, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<TradeReadDTO> CreateAsync(TradeCreateDTO dto)
         {
+            var userName = GetUserName();
+
             // Mapper DTO -> Domain
             var entite = new Trade
             {
@@ -36,8 +40,8 @@ namespace P7CreateRestApi.Services
                 SourceListId = dto.SourceListId,
                 Side = dto.Side,
                 CreationDate = DateTime.UtcNow,
-                CreationName = "user", // A implémenter lors du développement de l'authentification
-                RevisionName = "user", // A implémenter lors du développement de l'authentification
+                CreationName = userName,
+                RevisionName = userName,
                 RevisionDate = DateTime.UtcNow
 
             };
@@ -110,7 +114,7 @@ namespace P7CreateRestApi.Services
 
         public async Task<TradeReadDTO?> GetByIdAsync(int id)
         {
-            // Appeeler le repository
+            // Appeler le repository
             var entite = await _repository.GetByIdAsync(id);
 
             if (entite == null)
@@ -144,6 +148,8 @@ namespace P7CreateRestApi.Services
 
         public async Task<TradeReadDTO?> UpdateAsync(int id, TradeUpdateDTO dto)
         {
+            var userName = GetUserName();
+
             // Récupérer l'entité existante
             var entite = await _repository.GetByIdAsync(id);
 
@@ -166,7 +172,7 @@ namespace P7CreateRestApi.Services
             entite.DealName = dto.DealName;
             entite.DealType = dto.DealType;
             entite.Side = dto.Side;
-            entite.RevisionName = "user"; // A implémenter lors du développement de l'authentification;
+            entite.RevisionName = userName;
             entite.RevisionDate = DateTime.UtcNow;
 
             // Appeler le repository
@@ -197,5 +203,12 @@ namespace P7CreateRestApi.Services
                 Side = mettreAJour.Side
             };
         }
+
+
+        private string GetUserName()
+        {
+            return _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Inconnu";
+        }
+
     }
 }

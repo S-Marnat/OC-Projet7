@@ -60,7 +60,7 @@ namespace P7CreateRestApi.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la mise a jour du rôle pour l'utilisateur Id={Id}", id);
+                _logger.LogError(ex, "Erreur lors de la mise à jour du rôle pour l'utilisateur Id={Id}", id);
                 return StatusCode(500, "Une erreur interne est survenue.");
             }
         }
