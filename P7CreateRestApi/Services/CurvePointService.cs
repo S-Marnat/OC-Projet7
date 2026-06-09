@@ -93,6 +93,7 @@ namespace P7CreateRestApi.Services
                 return null;
 
             // Mapper DTO -> Domain
+            entite.CurveId = dto.CurveId;
             entite.AsOfDate = dto.AsOfDate;
             entite.Term = dto.Term;
             entite.CurvePointValue = dto.CurvePointValue;
@@ -104,6 +105,7 @@ namespace P7CreateRestApi.Services
             return new CurvePointReadDTO
             {
                 Id = mettreAJour.Id,
+                CurveId= mettreAJour.CurveId,
                 AsOfDate = mettreAJour.AsOfDate,
                 Term = mettreAJour.Term,
                 CurvePointValue = mettreAJour.CurvePointValue,
