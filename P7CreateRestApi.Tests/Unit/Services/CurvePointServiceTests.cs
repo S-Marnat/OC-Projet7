@@ -8,7 +8,8 @@ using P7CreateRestApi.Services;
 namespace P7CreateRestApi.Tests.Unit.Services
 {
     public class CurvePointServiceTests
-    {[Fact]
+    {
+        [Fact]
         public async Task CreateAsync_AppelerRepository1Fois()
         {
             // Arrange
