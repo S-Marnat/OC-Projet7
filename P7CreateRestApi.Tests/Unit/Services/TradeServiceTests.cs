@@ -449,6 +449,44 @@ namespace P7CreateRestApi.Tests.Unit.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_TradeInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ITradeRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+        new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((Trade?)null);
+
+            var service = new TradeService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetByIdAsync_MappingCorrect()
         {
             // Arrange
@@ -617,6 +655,129 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.UpdateAsync(It.IsAny<Trade>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_TradeInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ITradeRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+        new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((Trade?)null);
+
+            var service = new TradeService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new TradeUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ITradeRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+        new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            var dto = new TradeUpdateDTO
+            {
+                Account = "ACC-001",
+                AccountType = "Buy",
+                BuyQuantity = 1000,
+                SellQuantity = 0,
+                BuyPrice = 98.50,
+                SellPrice = 0,
+                Benchmark = "LIBOR",
+                TradeDate = new DateTime(2024, 1, 15),
+                TradeSecurity = "Bond AAA 2028",
+                TradeStatus = "Open",
+                Trader = "John Doe",
+                Book = "TRADING_BOOK_1",
+                DealName = "Bond Purchase 2024",
+                DealType = "Buy",
+                Side = "Buy"
+            };
+
+            var entiteMiseAJour = new Trade
+            {
+                TradeId = 1,
+                Account = dto.Account,
+                AccountType = dto.AccountType,
+                BuyQuantity = dto.BuyQuantity,
+                SellQuantity = dto.SellQuantity,
+                BuyPrice = dto.BuyPrice,
+                SellPrice = dto.SellPrice,
+                Benchmark = dto.Benchmark,
+                TradeDate = dto.TradeDate,
+                TradeSecurity = dto.TradeSecurity,
+                TradeStatus = dto.TradeStatus,
+                Trader = dto.Trader,
+                Book = dto.Book,
+                DealName = dto.DealName,
+                DealType = dto.DealType,
+                SourceListId = "SRC-001",
+                Side = dto.Side,
+                CreationDate = DateTime.UtcNow,
+                CreationName = "Faux utilisateur",
+                RevisionName = "Faux utilisateur",
+                RevisionDate = DateTime.UtcNow
+            };
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(entiteMiseAJour);
+
+            mock.Setup(r => r.UpdateAsync(It.IsAny<Trade>()))
+                .ReturnsAsync((Trade?)null);
+
+            var service = new TradeService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]

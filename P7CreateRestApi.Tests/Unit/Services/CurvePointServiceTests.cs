@@ -191,6 +191,24 @@ namespace P7CreateRestApi.Tests.Unit.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_CurvePointInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ICurvePointRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((CurvePoint?)null);
+
+            var service = new CurvePointService(mock.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetByIdAsync_MappingCorrect()
         {
             // Arrange
@@ -261,6 +279,63 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.UpdateAsync(It.IsAny<CurvePoint>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_CurvePointInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ICurvePointRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((CurvePoint?)null);
+
+            var service = new CurvePointService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new CurvePointUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<ICurvePointRepository>();
+
+            var dto = new CurvePointUpdateDTO
+            {
+                CurveId = 1,
+                AsOfDate = new DateTime(2024, 1, 2),
+                Term = 1.0,
+                CurvePointValue = 3.15
+            };
+
+            var entiteMiseAJour = new CurvePoint
+            {
+                Id = 1,
+                CurveId = 1,
+                AsOfDate = new DateTime(2024, 1, 2),
+                Term = 1.0,
+                CurvePointValue = 3.15,
+                CreationDate = DateTime.UtcNow
+            };
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(entiteMiseAJour);
+
+            mock.Setup(r => r.UpdateAsync(It.IsAny<CurvePoint>()))
+                .ReturnsAsync((CurvePoint?)null);
+
+            var service = new CurvePointService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]

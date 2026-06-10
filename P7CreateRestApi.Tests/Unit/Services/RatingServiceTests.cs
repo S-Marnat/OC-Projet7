@@ -198,6 +198,24 @@ namespace P7CreateRestApi.Tests.Unit.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_RatingInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRatingRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((Rating?)null);
+
+            var service = new RatingService(mock.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetByIdAsync_MappingCorrect()
         {
             // Arrange
@@ -271,6 +289,64 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.UpdateAsync(It.IsAny<Rating>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_RatingInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRatingRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((Rating?)null);
+
+            var service = new RatingService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new RatingUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRatingRepository>();
+
+            var dto = new RatingUpdateDTO
+            {
+                MoodysRating = "Aaa",
+                SandPRating = "AAA",
+                FitchRating = "AAA"
+            };
+
+            double moyenne = (1 + 1 + 1) / 3;
+            byte orderNumber = (byte)Math.Round(moyenne);
+
+            var entiteMiseAJour = new Rating
+            {
+                Id = 1,
+                MoodysRating = "Aaa",
+                SandPRating = "AAA",
+                FitchRating = "AAA",
+                OrderNumber = orderNumber
+            };
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(entiteMiseAJour);
+
+            mock.Setup(r => r.UpdateAsync(It.IsAny<Rating>()))
+                .ReturnsAsync((Rating?)null);
+
+            var service = new RatingService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]

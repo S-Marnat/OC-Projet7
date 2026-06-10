@@ -101,6 +101,9 @@ namespace P7CreateRestApi.Services
             // Appeler le repository
             var mettreAJour = await _repository.UpdateAsync(entite);
 
+            if (mettreAJour == null)
+                return null;
+
             // Mapper Domain -> DTO Read
             return new CurvePointReadDTO
             {

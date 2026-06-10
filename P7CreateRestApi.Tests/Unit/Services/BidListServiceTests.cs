@@ -438,7 +438,7 @@ namespace P7CreateRestApi.Tests.Unit.Services
             };
 
             httpContextAccessorMock.Setup(x => x.HttpContext)
-                                   .Returns(fauxContext);
+                .Returns(fauxContext);
 
             mock.Setup(r => r.GetByIdAsync(1))
                 .ReturnsAsync(new BidList());
@@ -450,6 +450,44 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.GetByIdAsync(1), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_BidListInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IBidListRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((BidList?)null);
+
+            var service = new BidListService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]
@@ -625,6 +663,131 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.UpdateAsync(It.IsAny<BidList>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_BidListInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IBidListRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((BidList?)null);
+
+            var service = new BidListService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new BidListUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IBidListRepository>();
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+            // Faux utilisateur
+            var fauxUser = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, "Faux utilisateur")
+                    },
+                    "TestAuthType"
+                )
+            );
+
+            var fauxContext = new DefaultHttpContext
+            {
+                User = fauxUser
+            };
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                                   .Returns(fauxContext);
+
+            var dto = new BidListUpdateDTO
+            {
+                Account = "ClientA",
+                BidType = "Type1",
+                BidQuantity = 100,
+                AskQuantity = 120,
+                Bid = 10.5,
+                Ask = 11.0,
+                Benchmark = "LIBOR",
+                BidListDate = new DateTime(2024, 1, 10),
+                Commentary = "Initial bid",
+                BidSecurity = "Bond A",
+                BidStatus = "Open",
+                Trader = "Trader1",
+                Book = "Book1",
+                DealName = "DealA",
+                DealType = "Spot",
+                Side = "Buy"
+            };
+
+            var entiteMiseAJour = new BidList
+            {
+                BidListId = 1,
+                Account = "ClientA",
+                BidType = "Type1",
+                BidQuantity = 100,
+                AskQuantity = 120,
+                Bid = 10.5,
+                Ask = 11.0,
+                Benchmark = "LIBOR",
+                BidListDate = new DateTime(2024, 1, 10),
+                Commentary = "Initial bid",
+                BidSecurity = "Bond A",
+                BidStatus = "Open",
+                Trader = "Trader1",
+                Book = "Book1",
+                DealName = "DealA",
+                DealType = "Spot",
+                SourceListId = "Source1",
+                Side = "Buy",
+                CreationDate = DateTime.UtcNow,
+                CreationName = "Faux utilisateur",
+                RevisionName = "Faux utilisateur",
+                RevisionDate = DateTime.UtcNow
+            };
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(entiteMiseAJour);
+
+            mock.Setup(r => r.UpdateAsync(It.IsAny<BidList>()))
+                .ReturnsAsync((BidList?)null);
+
+            var service = new BidListService(mock.Object, httpContextAccessorMock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]

@@ -205,6 +205,24 @@ namespace P7CreateRestApi.Tests.Unit.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_RuleNameInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRuleNameRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((RuleName?)null);
+
+            var service = new RuleNameService(mock.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetByIdAsync_MappingCorrect()
         {
             // Arrange
@@ -281,6 +299,66 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mock.Verify(r => r.UpdateAsync(It.IsAny<RuleName>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_RuleNameInexistant_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRuleNameRepository>();
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((RuleName?)null);
+
+            var service = new RuleNameService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new RuleNameUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mock = new Mock<IRuleNameRepository>();
+
+            var dto = new RuleNameUpdateDTO
+            {
+                Name = "AccountBalanceCheck",
+                Description = "Vérifie que le solde du compte est positif",
+                Json = "{\"minBalance\": 0}",
+                Template = "Account {{accountId}} has a balance of {{balance}}",
+                SqlStr = "SELECT * FROM Accounts WHERE Balance >= 0",
+                SqlPart = "WHERE Balance >= 0"
+            };
+
+            var entiteMiseAJour = new RuleName
+            {
+                Id = 1,
+                Name = "AccountBalanceCheck",
+                Description = "Vérifie que le solde du compte est positif",
+                Json = "{\"minBalance\": 0}",
+                Template = "Account {{accountId}} has a balance of {{balance}}",
+                SqlStr = "SELECT * FROM Accounts WHERE Balance >= 0",
+                SqlPart = "WHERE Balance >= 0"
+            };
+
+            mock.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(entiteMiseAJour);
+
+            mock.Setup(r => r.UpdateAsync(It.IsAny<RuleName>()))
+                .ReturnsAsync((RuleName?)null);
+
+            var service = new RuleNameService(mock.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]

@@ -116,6 +116,25 @@ namespace P7CreateRestApi.Tests.Unit.Services
         }
 
         [Fact]
+        public async Task GetByIdAsync_UtilisateurInexistant_RetournerNull()
+        {
+            // Arrange
+            var mockRepository = new Mock<IUserRepository>();
+            var mockUserManager = MockUserManager();
+
+            mockRepository.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((User?)null);
+
+            var service = new UserService(mockRepository.Object, mockUserManager.Object);
+
+            // Act
+            var resultat = await service.GetByIdAsync(1);
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetByIdAsync_MappingCorrect()
         {
             // Arrange
@@ -184,6 +203,59 @@ namespace P7CreateRestApi.Tests.Unit.Services
 
             // Assert
             mockRepository.Verify(r => r.UpdateAsync(1, dto.Fullname), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UtilisateurInexistant_RetournerNull()
+        {
+            // Arrange
+            var mockRepository = new Mock<IUserRepository>();
+            var mockUserManager = MockUserManager();
+
+            mockRepository.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync((User?)null);
+
+            var service = new UserService(mockRepository.Object, mockUserManager.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, new UserUpdateDTO());
+
+            // Assert
+            resultat.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task UpdateAsync_UpdateEchoue_RetournerNull()
+        {
+            // Arrange
+            var mockRepository = new Mock<IUserRepository>();
+            var mockUserManager = MockUserManager();
+
+            var dto = new UserUpdateDTO
+            {
+                Fullname = "Administrateur Système",
+            };
+
+            var userMisAJour = new User
+            {
+                Id = 1,
+                UserName = "admin",
+                Fullname = "Administrateur Système"
+            };
+
+            mockRepository.Setup(r => r.GetByIdAsync(1))
+                .ReturnsAsync(userMisAJour);
+
+            mockRepository.Setup(r => r.UpdateAsync(1, It.IsAny<string>()))
+                  .ReturnsAsync((User?)null);
+
+            var service = new UserService(mockRepository.Object, mockUserManager.Object);
+
+            // Act
+            var resultat = await service.UpdateAsync(1, dto);
+
+            // Assert
+            resultat.Should().BeNull();
         }
 
         [Fact]
