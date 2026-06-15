@@ -153,8 +153,24 @@ namespace P7CreateRestApi.Tests.Unit.Controllers
             var mockUserManager = MockUserManager();
             var mockLogger = new Mock<ILogger<UserController>>();
 
+            var user = new User
+            {
+                Id = 1,
+                UserName = "AncienNom",
+                Fullname = "Ancien Nom"
+            };
+
+            var dto = new UserUpdateDTO
+            {
+                UserName = "NouveauNom",
+                Fullname = "Nouveau Nom"
+            };
+
             mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
-                .ReturnsAsync(new User { Id = 1, UserName = "UserNameTest" });
+                .ReturnsAsync(user);
+
+            mockUserManager.Setup(um => um.FindByNameAsync(dto.UserName))
+                .ReturnsAsync((User?)null);
 
             mockUserManager.Setup(um => um.UpdateAsync(It.IsAny<User>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -168,10 +184,14 @@ namespace P7CreateRestApi.Tests.Unit.Controllers
             };
 
             // Act
-            var resultat = await controller.Update(new UserUpdateDTO());
+            var resultat = await controller.Update(dto);
 
             // Assert
             mockUserManager.Verify(um => um.UpdateAsync(It.IsAny<User>()), Times.Once);
+
+            user.UserName.Should().Be("NouveauNom");
+            user.NormalizedUserName.Should().Be("NOUVEAUNOM");
+            user.Fullname.Should().Be("Nouveau Nom");
 
             resultat.Should().BeOfType<OkObjectResult>();
         }
@@ -306,6 +326,155 @@ namespace P7CreateRestApi.Tests.Unit.Controllers
 
             // Assert
             mockUserManager.Verify(um => um.UpdateAsync(It.IsAny<User>()), Times.Once);
+
+            resultat.Should().BeOfType<ObjectResult>();
+
+            var erreur = resultat as ObjectResult;
+            erreur.StatusCode.Should().Be(500);
+            erreur.Value.Should().Be("Une erreur interne est survenue.");
+        }
+
+        [Fact]
+        public async Task PutPassword_Succes_RetournerOk()
+        {
+            // Arrange
+            var mockService = new Mock<IUserService>();
+            var mockUserManager = MockUserManager();
+            var mockLogger = new Mock<ILogger<UserController>>();
+
+            var user = new User();
+            var dto = new UserUpdatePasswordDTO
+            {
+                OldPassword = "AncienMdp",
+                NewPassword = "NouveauMdp"
+            };
+
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(user);
+
+            mockUserManager.Setup(um => um.CheckPasswordAsync(user, dto.OldPassword))
+                .ReturnsAsync(true);
+
+            mockUserManager.Setup(um => um.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword))
+                .ReturnsAsync(IdentityResult.Success);
+
+            var controller = new UserController(mockService.Object, mockUserManager.Object, mockLogger.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            // Act
+            var resultat = await controller.UpdatePassword(dto);
+
+            // Assert
+            mockUserManager.Verify(um => um.ChangePasswordAsync(It.IsAny<User>(), dto.OldPassword, dto.NewPassword), Times.Once);
+
+            resultat.Should().BeOfType<OkObjectResult>();
+
+            var ok = resultat as OkObjectResult;
+            ok.Value.Should().Be("Mot de passe modifié avec succès.");
+        }
+
+        [Fact]
+        public async Task PutPassword_AuthentificationInvalide_RetournerUnauthorized()
+        {
+            // Arrange
+            var mockService = new Mock<IUserService>();
+            var mockUserManager = MockUserManager();
+            var mockLogger = new Mock<ILogger<UserController>>();
+
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync((User?)null);
+
+            var controller = new UserController(mockService.Object, mockUserManager.Object, mockLogger.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            // Act
+            var resultat = await controller.UpdatePassword(new UserUpdatePasswordDTO());
+
+            // Assert
+            mockUserManager.Verify(um => um.ChangePasswordAsync(It.IsAny<User>(), "AncientMdp", "NouveauMdp"), Times.Never);
+
+            resultat.Should().BeOfType<UnauthorizedResult>();
+        }
+
+        [Fact]
+        public async Task PutPassword_InformationsInvalides_RetournerBadRequest()
+        {
+            // Arrange
+            var mockService = new Mock<IUserService>();
+            var mockUserManager = MockUserManager();
+            var mockLogger = new Mock<ILogger<UserController>>();
+
+            var dto = new UserUpdatePasswordDTO
+            {
+                OldPassword = "AncienMdp",
+                NewPassword = "NouveauMdp"
+            };
+
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(new User());
+
+            mockUserManager.Setup(um => um.ChangePasswordAsync(It.IsAny<User>(), dto.OldPassword, dto.NewPassword))
+                .ReturnsAsync(IdentityResult.Failed());
+
+            var controller = new UserController(mockService.Object, mockUserManager.Object, mockLogger.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            // Act
+            var resultat = await controller.UpdatePassword(dto);
+
+            // Assert
+            mockUserManager.Verify(um => um.ChangePasswordAsync(It.IsAny<User>(), dto.OldPassword, dto.NewPassword), Times.Once);
+
+            resultat.Should().BeOfType<BadRequestObjectResult>();
+
+            var erreur = resultat as BadRequestObjectResult;
+            erreur.Value.Should().Be("Les informations de mot de passe fournies sont invalides.");
+        }
+
+        [Fact]
+        public async Task PutPassword_ExceptionLevee_Retourner500()
+        {
+            // Arrange
+            var mockService = new Mock<IUserService>();
+            var mockUserManager = MockUserManager();
+            var mockLogger = new Mock<ILogger<UserController>>();
+
+            var dto = new UserUpdatePasswordDTO
+            {
+                OldPassword = "AncienMdp",
+                NewPassword = "NouveauMdp"
+            };
+
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(new User());
+
+            mockUserManager.Setup(um => um.ChangePasswordAsync(It.IsAny<User>(), dto.OldPassword, dto.NewPassword))
+                .ThrowsAsync(new Exception("Erreur simulée"));
+
+            var controller = new UserController(mockService.Object, mockUserManager.Object, mockLogger.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
+            // Act
+            var resultat = await controller.UpdatePassword(dto);
+
+            // Assert
+            mockUserManager.Verify(um => um.ChangePasswordAsync(It.IsAny<User>(), dto.OldPassword, dto.NewPassword), Times.Once);
 
             resultat.Should().BeOfType<ObjectResult>();
 
