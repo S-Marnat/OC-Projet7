@@ -1,16 +1,11 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using P7CreateRestApi.Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using P7CreateRestApi.Models;
 using P7CreateRestApi.Repositories.Interfaces;
 using P7CreateRestApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace P7CreateRestApi.Tests.Unit.Services
 {

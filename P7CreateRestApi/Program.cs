@@ -1,13 +1,11 @@
-using Dot.Net.WebApi.Data;
-using Dot.Net.WebApi.Domain;
-using Dot.Net.WebApi.Repositories;
+using P7CreateRestApi.Data;
+using P7CreateRestApi.Domain;
+using P7CreateRestApi.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using P7CreateRestApi.Middlewares;
-using P7CreateRestApi.Repositories;
 using P7CreateRestApi.Repositories.Interfaces;
 using P7CreateRestApi.Services;
 using P7CreateRestApi.Services.Interfaces;

@@ -1,5 +1,4 @@
-﻿using Dot.Net.WebApi.Controllers;
-using Dot.Net.WebApi.Domain;
+﻿using P7CreateRestApi.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

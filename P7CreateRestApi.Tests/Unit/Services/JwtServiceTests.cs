@@ -1,11 +1,10 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using P7CreateRestApi.Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 using P7CreateRestApi.Services;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
-
 using System.Security.Claims;
 
 namespace P7CreateRestApi.Tests.Unit.Services

@@ -1,16 +1,14 @@
 ﻿
-using Dot.Net.WebApi.Controllers;
-using Dot.Net.WebApi.Domain;
+using P7CreateRestApi.Controllers;
+using P7CreateRestApi.Domain;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using P7CreateRestApi.Controllers;
 using P7CreateRestApi.Models;
 using P7CreateRestApi.Services.Interfaces;
-using System.Security.Claims;
 
 namespace P7CreateRestApi.Tests.Unit.Controllers
 {

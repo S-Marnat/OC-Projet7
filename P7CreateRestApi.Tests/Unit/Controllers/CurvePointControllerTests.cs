@@ -1,4 +1,4 @@
-﻿using Dot.Net.WebApi.Controllers;
+﻿using P7CreateRestApi.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

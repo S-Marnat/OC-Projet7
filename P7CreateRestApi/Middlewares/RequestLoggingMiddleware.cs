@@ -1,8 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace P7CreateRestApi.Middlewares
 {

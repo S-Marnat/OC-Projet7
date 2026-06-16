@@ -1,10 +1,9 @@
-using Dot.Net.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using P7CreateRestApi.Models;
 using P7CreateRestApi.Services.Interfaces;
 
-namespace Dot.Net.WebApi.Domain
+namespace P7CreateRestApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]

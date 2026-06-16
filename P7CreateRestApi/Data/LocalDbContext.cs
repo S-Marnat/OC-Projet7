@@ -1,9 +1,9 @@
-using Dot.Net.WebApi.Domain;
+using P7CreateRestApi.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace Dot.Net.WebApi.Data
+namespace P7CreateRestApi.Data
 {
     public class LocalDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {

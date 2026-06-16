@@ -1,4 +1,4 @@
-﻿using Dot.Net.WebApi.Domain;
+﻿using P7CreateRestApi.Domain;
 
 namespace P7CreateRestApi.Services.Interfaces
 {

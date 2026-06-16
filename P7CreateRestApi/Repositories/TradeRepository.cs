@@ -1,9 +1,7 @@
-﻿using Dot.Net.WebApi.Data;
-using Dot.Net.WebApi.Domain;
+﻿using P7CreateRestApi.Data;
+using P7CreateRestApi.Domain;
 using Microsoft.EntityFrameworkCore;
 using P7CreateRestApi.Repositories.Interfaces;
-using System.Collections;
-using System.Diagnostics;
 
 namespace P7CreateRestApi.Repositories
 {
