@@ -5,6 +5,7 @@ using P7CreateRestApi.Services.Interfaces;
 
 namespace P7CreateRestApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CurvePointController : ControllerBase
@@ -61,7 +62,6 @@ namespace P7CreateRestApi.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CurvePointCreateDTO dto)
         {
@@ -87,7 +87,6 @@ namespace P7CreateRestApi.Controllers
             }
         }
 
-        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, CurvePointUpdateDTO dto)
         {
